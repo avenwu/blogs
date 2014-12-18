@@ -17,4 +17,16 @@ public class MainActivity extends ActionBarActivity {
 	public void showShortcut(View view) {
 		startActivity(new Intent(this, ShortcutDemo.class));
 	}
+
+	public void showDrawerFrame(View view) {
+		Intent intent = new Intent(this, RefreshWidgetActivity.class);
+		intent.putExtra("fragment", DrawerDemoFragment.class);
+		startActivity(intent);
+	}
+
+	public void showRefreshLayout(View view) {
+		Intent intent = new Intent(this, RefreshWidgetActivity.class);
+		intent.putExtra("fragment", RefreshDemoFragment.class);
+		startActivity(intent);
+	}
 }
