@@ -5,7 +5,9 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 
+import com.avenwu.annotation.PrintMe;
 
+@PrintMe
 public class MainActivity extends ActionBarActivity {
 
 	@Override
@@ -18,12 +20,14 @@ public class MainActivity extends ActionBarActivity {
 		startActivity(new Intent(this, ShortcutDemo.class));
 	}
 
+	@PrintMe
 	public void showDrawerFrame(View view) {
 		Intent intent = new Intent(this, RefreshWidgetActivity.class);
 		intent.putExtra("fragment", DrawerDemoFragment.class);
 		startActivity(intent);
 	}
 
+	@PrintMe
 	public void showRefreshLayout(View view) {
 		Intent intent = new Intent(this, RefreshWidgetActivity.class);
 		intent.putExtra("fragment", RefreshDemoFragment.class);
