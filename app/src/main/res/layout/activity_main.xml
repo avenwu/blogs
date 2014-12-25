@@ -14,30 +14,26 @@
         android:orientation="vertical">
 
         <Button
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            style="@style/DemoItemStyle"
             android:text="Shortcut install/uninstall"
             android:id="@+id/button"
-            android:layout_gravity="center_horizontal"
             android:onClick="showShortcut"/>
 
         <Button
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            style="@style/DemoItemStyle"
             android:text="Widget DrawerFrame"
             android:id="@+id/button2"
-            android:layout_gravity="center_horizontal"
             android:onClick="showDrawerFrame"/>
 
         <Button
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            style="@style/DemoItemStyle"
             android:text="Widget RefreshLayout"
             android:id="@+id/button3"
-            android:layout_gravity="center_horizontal"
             android:onClick="showRefreshLayout"/>
+        <Button
+            style="@style/DemoItemStyle"
+            android:text="Quadratic Bezier Polygon"
+            android:id="@+id/button4"
+            android:onClick="showQuadraticBezierPolygon"/>
     </LinearLayout>
 </ScrollView>

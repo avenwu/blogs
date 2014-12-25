@@ -17,18 +17,12 @@
             </intent-filter>
         </activity>
         <activity android:name=".ShortcutDemo" />
-        <!-- Theme.Holo.NoActionBar.TranslucentDecor -->
-        <!-- <activity -->
-        <!-- android:name=".StatusBarDemo" -->
-        <!-- android:theme="@style/StatusTheme" > -->
-        <!-- </activity> -->
-        <!-- <activity -->
-        <!-- android:name=".SlidingTab"> -->
-        <!-- </activity> -->
+
         <activity
             android:name=".RefreshWidgetActivity"
             android:label="@string/title_activity_refresh_widget" >
         </activity>
+        <activity android:name=".QQDraggingCircleDemo"/>
     </application>
 
 </manifest>
