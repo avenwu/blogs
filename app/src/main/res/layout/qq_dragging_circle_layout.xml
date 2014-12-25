@@ -7,10 +7,43 @@
     <com.avenwu.deepinandroid.widget.PolygonWithQuadraticBezirView
         android:id="@+id/shape1"
         android:layout_width="match_parent"
-        android:layout_height="160dp"/>
+        android:layout_height="200dp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#ff222222"/>
 
     <com.avenwu.deepinandroid.widget.PolygonWithQuadraticBezirView
         android:id="@+id/shape2"
         android:layout_width="match_parent"
-        android:layout_height="160dp"/>
+        android:layout_height="200dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Move Horizontal"
+        android:paddingLeft="15dp"
+        android:id="@+id/labelX"/>
+
+    <SeekBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/seekBarX"
+        android:max="100"
+        android:progress="50"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Move Vertical"
+        android:paddingLeft="15dp"
+        android:id="@+id/labelY"/>
+
+    <SeekBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/seekBarY"
+        android:max="100"
+        android:progress="50"/>
 </LinearLayout>

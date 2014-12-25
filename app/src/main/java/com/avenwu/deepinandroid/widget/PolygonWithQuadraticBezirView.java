@@ -7,7 +7,6 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 
@@ -24,6 +23,8 @@ public class PolygonWithQuadraticBezirView extends View {
     float mPointTwoRadius;
     Path mPath;
     Paint mShape;
+    float MAX_HORIZOTNAL_DISTANCE;
+    float MAX_VERTICAL_DISTANCE;
 
     public PolygonWithQuadraticBezirView(Context context) {
         this(context, null);
@@ -38,10 +39,13 @@ public class PolygonWithQuadraticBezirView extends View {
         mCirclePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mCirclePaint.setColor(0xff00bcd4);
         DisplayMetrics metrics = context.getResources().getDisplayMetrics();
-        mPointOneX = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 60, metrics);
+        MAX_HORIZOTNAL_DISTANCE = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 240, metrics);
+        MAX_VERTICAL_DISTANCE = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 200, metrics);
+
+        mPointOneX = MAX_VERTICAL_DISTANCE * 0.4f;
         mPointOneY = mPointOneX;
-        mPointTwoX = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 200, metrics);
-        mPointTwoY = mPointOneY * 1.5f;
+        mPointTwoX = mPointOneX * 1.75f;
+        mPointTwoY = MAX_HORIZOTNAL_DISTANCE * 0.5f;
         mPointOneRadius = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 15, metrics);
         mPointTwoRadius = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, metrics);
         mPath = new Path();
@@ -64,20 +68,29 @@ public class PolygonWithQuadraticBezirView extends View {
         float d = (float) Math.sqrt(dx * dx + dy * dy);
         float midX = (mPointOneX + mPointTwoX) / 2.0f;
         float midY = (mPointOneY + mPointTwoY) / 2.0f;
+        float k = (mPointTwoY - mPointOneY) / (mPointTwoX - mPointOneX);
 
         float sin = Math.abs(mPointOneRadius - mPointTwoRadius) / d;
         float cos = (float) Math.sqrt(1 - sin * sin);
+        if (k >= -1 && k <= 1) {
+            mPath.moveTo(mPointOneX + sin * mPointOneRadius, mPointOneY - cos * mPointOneRadius);
+            mPath.lineTo(mPointOneX, mPointOneY);
+            mPath.lineTo(mPointOneX + sin * mPointOneRadius, mPointOneY + cos * mPointOneRadius);
 
-        mPath.moveTo(mPointOneX + sin * mPointOneRadius, mPointOneY - cos * mPointOneRadius);
-        mPath.lineTo(mPointOneX, mPointOneY);
-        mPath.lineTo(mPointOneX + sin * mPointOneRadius, mPointOneY + cos * mPointOneRadius);
+            mPath.quadTo(midX, midY, mPointTwoX + sin * mPointTwoRadius, mPointTwoY + cos * mPointTwoRadius);
+            mPath.lineTo(mPointTwoX, mPointTwoY);
+            mPath.lineTo(mPointTwoX + sin * mPointTwoRadius, mPointTwoY - cos * mPointTwoRadius);
+            mPath.quadTo(midX, midY, mPointOneX + sin * mPointOneRadius, mPointOneY - cos * mPointOneRadius);
+        } else {
+            mPath.moveTo(mPointOneX + cos * mPointOneRadius, mPointOneY + sin * mPointOneRadius);
+            mPath.lineTo(mPointOneX, mPointOneY);
+            mPath.lineTo(mPointOneX - cos * mPointOneRadius, mPointOneY + sin * mPointOneRadius);
 
-        mPath.quadTo(midX, midY, mPointTwoX + sin * mPointTwoRadius, mPointTwoY + cos * mPointTwoRadius);
-//        mPath.lineTo(mPointTwoX + sin * mPointTwoRadius, mPointTwoY + cos * mPointTwoRadius);
-        mPath.lineTo(mPointTwoX, mPointTwoY);
-        mPath.lineTo(mPointTwoX + sin * mPointTwoRadius, mPointTwoY - cos * mPointTwoRadius);
-        mPath.quadTo(midX, midY, mPointOneX + sin * mPointOneRadius, mPointOneY - cos * mPointOneRadius);
-//        mPath.lineTo(mPointOneX + sin * mPointOneRadius, mPointOneY - cos * mPointOneRadius);
+            mPath.quadTo(midX, midY, mPointTwoX - cos * mPointTwoRadius, mPointTwoY + sin * mPointTwoRadius);
+            mPath.lineTo(mPointTwoX, mPointTwoY);
+            mPath.lineTo(mPointTwoX + cos * mPointTwoRadius, mPointTwoY + sin * mPointTwoRadius);
+            mPath.quadTo(midX, midY, mPointOneX + cos * mPointOneRadius, mPointOneY + sin * mPointOneRadius);
+        }
         canvas.drawPath(mPath, mShape);
     }
 
@@ -89,6 +102,16 @@ public class PolygonWithQuadraticBezirView extends View {
             mShape.setStyle(Paint.Style.STROKE);
             mShape.setColor(Color.RED);
         }
-        postInvalidate();
+        invalidate();
+    }
+
+    public void moveHorizontal(float percent) {
+        mPointTwoX = MAX_HORIZOTNAL_DISTANCE * percent;
+        invalidate();
+    }
+
+    public void moveVertical(float percent) {
+        mPointTwoY = MAX_VERTICAL_DISTANCE * percent;
+        invalidate();
     }
 }
