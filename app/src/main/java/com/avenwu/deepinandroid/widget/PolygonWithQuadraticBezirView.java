@@ -46,7 +46,7 @@ public class PolygonWithQuadraticBezirView extends View {
         mPointOneY = mPointOneX;
         mPointTwoX = mPointOneX * 1.75f;
         mPointTwoY = MAX_HORIZOTNAL_DISTANCE * 0.5f;
-        mPointOneRadius = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 15, metrics);
+        mPointOneRadius = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, metrics);
         mPointTwoRadius = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, metrics);
         mPath = new Path();
         mShape = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -63,34 +63,31 @@ public class PolygonWithQuadraticBezirView extends View {
         canvas.drawCircle(mPointOneX, mPointOneY, mPointOneRadius, mCirclePaint);
         canvas.drawCircle(mPointTwoX, mPointTwoY, mPointTwoRadius, mCirclePaint);
         mPath.reset();
-        float dx = mPointTwoX - mPointOneX;
-        float dy = mPointTwoY - mPointOneY;
-        float d = (float) Math.sqrt(dx * dx + dy * dy);
+        float d = (float) Math.sqrt(Math.pow(mPointTwoX - mPointOneX, 2) + Math.pow(mPointTwoY - mPointOneY, 2));
         float midX = (mPointOneX + mPointTwoX) / 2.0f;
         float midY = (mPointOneY + mPointTwoY) / 2.0f;
         float k = (mPointTwoY - mPointOneY) / (mPointTwoX - mPointOneX);
 
-        float sin = Math.abs(mPointOneRadius - mPointTwoRadius) / d;
-        float cos = (float) Math.sqrt(1 - sin * sin);
-        if (k >= -1 && k <= 1) {
-            mPath.moveTo(mPointOneX + sin * mPointOneRadius, mPointOneY - cos * mPointOneRadius);
-            mPath.lineTo(mPointOneX, mPointOneY);
-            mPath.lineTo(mPointOneX + sin * mPointOneRadius, mPointOneY + cos * mPointOneRadius);
+        float offsetX = (float) (mPointOneRadius * Math.sin(Math.atan(k)));
+        float offsetY = (float) (mPointOneRadius * Math.cos(Math.atan(k)));
+        float offsetX2 = (float) (mPointTwoRadius * Math.sin(Math.atan(k)));
+        float offsetY2 = (float) (mPointTwoRadius * Math.cos(Math.atan(k)));
+        float x1 = mPointOneX - offsetX;
+        float y1 = mPointOneY + offsetY;
 
-            mPath.quadTo(midX, midY, mPointTwoX + sin * mPointTwoRadius, mPointTwoY + cos * mPointTwoRadius);
-            mPath.lineTo(mPointTwoX, mPointTwoY);
-            mPath.lineTo(mPointTwoX + sin * mPointTwoRadius, mPointTwoY - cos * mPointTwoRadius);
-            mPath.quadTo(midX, midY, mPointOneX + sin * mPointOneRadius, mPointOneY - cos * mPointOneRadius);
-        } else {
-            mPath.moveTo(mPointOneX + cos * mPointOneRadius, mPointOneY + sin * mPointOneRadius);
-            mPath.lineTo(mPointOneX, mPointOneY);
-            mPath.lineTo(mPointOneX - cos * mPointOneRadius, mPointOneY + sin * mPointOneRadius);
+        float x2 = mPointTwoX - offsetX2;
+        float y2 = mPointTwoY + offsetY2;
 
-            mPath.quadTo(midX, midY, mPointTwoX - cos * mPointTwoRadius, mPointTwoY + sin * mPointTwoRadius);
-            mPath.lineTo(mPointTwoX, mPointTwoY);
-            mPath.lineTo(mPointTwoX + cos * mPointTwoRadius, mPointTwoY + sin * mPointTwoRadius);
-            mPath.quadTo(midX, midY, mPointOneX + cos * mPointOneRadius, mPointOneY + sin * mPointOneRadius);
-        }
+        float x3 = mPointTwoX + offsetX2;
+        float y3 = mPointTwoY - offsetY2;
+
+        float x4 = mPointOneX + offsetX;
+        float y4 = mPointOneY - offsetY;
+        mPath.moveTo(x1, y1);
+        mPath.quadTo(midX, midY, x2, y2);
+        mPath.lineTo(x3, y3);
+        mPath.quadTo(midX, midY, x4, y4);
+        mPath.lineTo(x1, y1);
         canvas.drawPath(mPath, mShape);
     }
 
