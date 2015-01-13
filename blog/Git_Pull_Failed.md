@@ -1,5 +1,5 @@
 #RPC failed result=18, HTTP code =200| 1024 bytes/s
-在使用git管理项目代码是非常方便，由于笔者经常在不同计算机上开发项目，今天pull代码时突然报异常：  
+在使用git管理项目代码时非常方便，由于笔者经常在不同计算机上开发项目，pull代码时突然报异常：  
 
 	RPC failed result=18, HTTP code =200| 1024 bytes/s
 	fatal: The remote end hang up unexceptedly
