@@ -19,10 +19,11 @@
         <activity android:name=".ShortcutDemo" />
 
         <activity
-            android:name=".RefreshWidgetActivity"
-            android:label="@string/title_activity_refresh_widget" >
+            android:name=".RefreshWidgetActivity">
         </activity>
         <activity android:name=".QQDraggingCircleDemo"/>
+        <activity android:name=".TagInputDemo"
+            android:windowSoftInputMode="stateVisible"/>
     </application>
 
 </manifest>

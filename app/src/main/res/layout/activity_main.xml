@@ -15,25 +15,27 @@
 
         <Button
             style="@style/DemoItemStyle"
-            android:text="Shortcut install/uninstall"
-            android:id="@+id/button"
+            android:text="@string/install_shortcut"
             android:onClick="showShortcut"/>
 
         <Button
             style="@style/DemoItemStyle"
-            android:text="Widget DrawerFrame"
-            android:id="@+id/button2"
+            android:text="@string/widget_drawerframe"
             android:onClick="showDrawerFrame"/>
 
         <Button
             style="@style/DemoItemStyle"
-            android:text="Widget RefreshLayout"
-            android:id="@+id/button3"
+            android:text="@string/widget_refresh_layout"
             android:onClick="showRefreshLayout"/>
         <Button
             style="@style/DemoItemStyle"
-            android:text="Quadratic Bezier Polygon"
-            android:id="@+id/button4"
-            android:onClick="showQuadraticBezierPolygon"/>
+            android:text="@string/quadratic_bezier_polygon"
+            android:tag="com.avenwu.deepinandroid.QQDraggingCircleDemo"
+            android:onClick="openActivity"/>
+        <Button
+            style="@style/DemoItemStyle"
+            android:text="@string/tag_input"
+            android:tag="com.avenwu.deepinandroid.TagInputDemo"
+            android:onClick="openActivity"/>
     </LinearLayout>
 </ScrollView>

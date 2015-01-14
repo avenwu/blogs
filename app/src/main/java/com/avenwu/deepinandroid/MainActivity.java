@@ -34,7 +34,7 @@ public class MainActivity extends ActionBarActivity {
         startActivity(intent);
     }
 
-    public void showQuadraticBezierPolygon(View view) {
-        startActivity(new Intent(this, QQDraggingCircleDemo.class));
+    public void openActivity(View view) throws ClassNotFoundException {
+        startActivity(new Intent(this, Class.forName((String) view.getTag())));
     }
 }
