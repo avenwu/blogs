@@ -352,6 +352,21 @@ public class TagInputLayout extends ViewGroup implements TextWatcher, View.OnKey
         }
     }
 
+    public CharSequence[] getTagArray() {
+        final int count = getChildCount();
+        if (count > 1) {
+            CharSequence[] tags = new CharSequence[count - 1];
+            for (int i = 0; i < count - 1; i++) {
+                View child = getChildAt(i);
+                if (child instanceof TextView) {
+                    tags[i] = ((TextView) child).getText();
+                }
+            }
+            return tags;
+        }
+        return new CharSequence[]{};
+    }
+
     /**
      * Implements your own Decorator to custom the tag view
      */

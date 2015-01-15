@@ -1,5 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.avenwu.deepinandroid.widget.TagInputLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="8dp" />
+    android:orientation="vertical">
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/get_tags"
+        android:onClick="onGetTags" />
+
+    <TextView
+        android:id="@+id/tv_tags"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <com.avenwu.deepinandroid.widget.TagInputLayout
+        android:id="@+id/tags"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="8dp" />
+</LinearLayout>
