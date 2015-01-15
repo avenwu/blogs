@@ -18,8 +18,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.avenwu.deepinandroid.R;
@@ -27,7 +25,7 @@ import com.avenwu.deepinandroid.R;
 /**
  * Created by chaobin on 1/14/15.
  */
-public class TagInputLayout extends LinearLayout implements TextWatcher, View.OnKeyListener, View.OnClickListener {
+public class TagInputLayout extends FlowLayout implements TextWatcher, View.OnKeyListener, View.OnClickListener {
     private final String TAG = TagInputLayout.class.getSimpleName();
     private EditText mInputView;
     private char[] mKeyChar = new char[]{',', '，'};
@@ -40,6 +38,7 @@ public class TagInputLayout extends LinearLayout implements TextWatcher, View.On
     private int mTagMarginTop;
     private int mTagMarginRight;
     private int mTagMarginBottom;
+    private int mTextSize;
 
     public TagInputLayout(Context context) {
         this(context, null);
@@ -55,23 +54,23 @@ public class TagInputLayout extends LinearLayout implements TextWatcher, View.On
         mTagMarginTop = a.getInt(R.styleable.TagInputLayout_tag_margin_top, margin);
         mTagMarginRight = a.getInt(R.styleable.TagInputLayout_tag_margin_right, margin);
         mTagMarginBottom = a.getInt(R.styleable.TagInputLayout_tag_margin_bottom, margin);
+        mTextSize = a.getInt(android.R.attr.textSize, 14);
         a.recycle();
         mInputView = new EditText(context, attrs);
-        mInputView.setBackgroundColor(Color.TRANSPARENT);
-        mInputView.setSingleLine();
         mInputView.setLayoutParams(genarateLayoutParams());
-        mInputView.setMinWidth(20);//random small width just to make the blinking tips visible
-        setOrientation(VERTICAL);
-        addView(mInputView);
+        mInputView.setBackgroundColor(Color.TRANSPARENT);
         mInputView.addTextChangedListener(this);
         mInputView.setOnKeyListener(this);
-        mInputView.setFocusable(true);
-        mInputView.setFocusableInTouchMode(true);
+        mInputView.setTextSize(mTextSize);
+        //random small width just to make the blinking tips visible
+        mInputView.setMinWidth(20);
+        mInputView.setSingleLine();
         setOnClickListener(this);
+        addView(mInputView);
     }
 
     private LayoutParams genarateLayoutParams() {
-        LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        MarginLayoutParams params = new MarginLayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         params.setMargins(mTagMarginLeft, mTagMarginTop, mTagMarginRight, mTagMarginBottom);
         return params;
     }
@@ -214,6 +213,7 @@ public class TagInputLayout extends LinearLayout implements TextWatcher, View.On
             tag.setPadding(padding, padding, padding, padding);
         }
         tag.setText(tagString);
+        tag.setTextSize(14);
         tag.setSingleLine();
         tag.setEllipsize(TextUtils.TruncateAt.END);
         tag.setClickable(true);

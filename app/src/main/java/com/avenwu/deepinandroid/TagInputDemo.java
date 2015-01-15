@@ -12,6 +12,7 @@ public class TagInputDemo extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(new TagInputLayout(this));
+//        setContentView(new TagInputLayout(this));
+        setContentView(R.layout.test_tag_input_layout);
     }
 }

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.avenwu.deepinandroid.widget.TagInputLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="4dp"
+    android:paddingRight="4dp"
+    android:textSize="14sp">
+
+</com.avenwu.deepinandroid.widget.TagInputLayout>
