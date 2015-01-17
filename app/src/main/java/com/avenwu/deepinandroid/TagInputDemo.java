@@ -2,6 +2,7 @@ package com.avenwu.deepinandroid;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.TextView;
 
@@ -16,7 +17,6 @@ public class TagInputDemo extends ActionBarActivity {
         super.onCreate(savedInstanceState);
 //        setContentView(new TagInputLayout(this));
         setContentView(R.layout.test_tag_input_layout);
-
     }
 
     public void onGetTags(View view) {

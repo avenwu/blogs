@@ -1,6 +1,8 @@
 package com.avenwu.deepinandroid.widget;
 
 import android.content.Context;
+import android.content.res.TypedArray;
+import android.content.res.XmlResourceParser;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
@@ -14,13 +16,20 @@ import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.SparseIntArray;
 import android.util.TypedValue;
+import android.util.Xml;
 import android.view.Gravity;
+import android.view.InflateException;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+
+import java.io.IOException;
 
 /**
  * Created by chaobin on 1/14/15.
@@ -51,7 +60,6 @@ public class TagInputLayout extends ViewGroup implements TextWatcher, View.OnKey
 
     public TagInputLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mDecorator = new SimpleDecorator(context);
         mInputView = new EditText(context);
         mInputView.setBackgroundColor(Color.TRANSPARENT);
         mInputView.addTextChangedListener(this);
@@ -60,18 +68,10 @@ public class TagInputLayout extends ViewGroup implements TextWatcher, View.OnKey
         mInputView.setMinWidth(20);
         mInputView.setSingleLine();
         mInputView.setGravity(Gravity.CENTER_VERTICAL);
-        initLayout();
-        setOnClickListener(this);
+        setDecorator(new SimpleDecorator(context));
         addView(mInputView);
+        setOnClickListener(this);
         previewInEditMode();
-    }
-
-    private void initLayout() {
-        mInputView.setTextSize(mDecorator.getTextSize());
-        if (mDecorator.getMaxLength() != INVALID_VALUE) {
-            InputFilter maxLengthFilter = new InputFilter.LengthFilter(mDecorator.getMaxLength());
-            mInputView.setFilters(new InputFilter[]{maxLengthFilter});
-        }
     }
 
     @Override
@@ -102,6 +102,7 @@ public class TagInputLayout extends ViewGroup implements TextWatcher, View.OnKey
             }
             width = Math.max(width, maxWidth);
         }
+        height += maxHeight + getPaddingTop() + getPaddingBottom();
         setMeasuredDimension(getImprovedSize(widthMeasureSpec, width), getImprovedSize(heightMeasureSpec, height));
     }
 
@@ -200,7 +201,7 @@ public class TagInputLayout extends ViewGroup implements TextWatcher, View.OnKey
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
             if (isKeyCodeHit(keyCode)) {
                 if (!TextUtils.isEmpty(mInputView.getText().toString())) {
-                    generateTag();
+                    generateTag(mInputView.getText().toString());
                 }
                 return true;
             } else if (KeyEvent.KEYCODE_DEL == keyCode) {
@@ -249,8 +250,8 @@ public class TagInputLayout extends ViewGroup implements TextWatcher, View.OnKey
             if (isKeyCharHit(s.charAt(0))) {
                 mInputView.setText("");
             } else if (isKeyCharHit(s.charAt(s.length() - 1))) {
-                mInputView.setText(s.subSequence(0, s.length() - 1) + "");
-                generateTag();
+                mInputView.setText("");
+                generateTag(s.subSequence(0, s.length() - 1) + "");
             }
         }
     }
@@ -291,8 +292,13 @@ public class TagInputLayout extends ViewGroup implements TextWatcher, View.OnKey
         }
     }
 
-    private void generateTag() {
-        String tagString = mInputView.getText().toString();
+    /**
+     * can be null
+     *
+     * @param tag
+     */
+    private void generateTag(CharSequence tag) {
+        CharSequence tagString = tag == null ? mInputView.getText().toString() : tag;
         mInputView.getText().clear();
         final int targetIndex = indexOfChild(mInputView);
         TextView tagLabel;
@@ -300,17 +306,15 @@ public class TagInputLayout extends ViewGroup implements TextWatcher, View.OnKey
             View view = View.inflate(getContext(), mDecorator.getLayout(), null);
             if (view instanceof TextView) {
                 tagLabel = (TextView) view;
-                MarginLayoutParams layoutParams = new MarginLayoutParams(tagLabel.getLayoutParams());
-                mInputView.setLayoutParams(layoutParams);
             } else {
                 throw new IllegalArgumentException("The custom layout for tagLabel label must have TextView as root element");
             }
         } else {
             tagLabel = new TextView(getContext());
-            updateCheckStatus(tagLabel, false);
             tagLabel.setPadding(mDecorator.getPadding()[0], mDecorator.getPadding()[1], mDecorator.getPadding()[2], mDecorator.getPadding()[3]);
             tagLabel.setTextSize(mDecorator.getTextSize());
         }
+        updateCheckStatus(tagLabel, false);
         tagLabel.setText(tagString);
         tagLabel.setSingleLine();
         tagLabel.setGravity(Gravity.CENTER_VERTICAL);
@@ -333,14 +337,19 @@ public class TagInputLayout extends ViewGroup implements TextWatcher, View.OnKey
         } else {
             view.setBackground(mDecorator.getBackgroundDrawable()[checked ? 1 : 0]);
         }
+        final int[] color = mDecorator.getTextColor();
+        if (color != null && color.length > 0) {
+            ((TextView) view).setTextColor((color[color.length > 1 ? (checked ? 1 : 0) : 0]));
+        }
     }
 
     private void previewInEditMode() {
         if (isInEditMode()) {
-            mInputView.setText("Hello Android!");
-            generateTag();
-            mInputView.setText("Hot Tag");
-            generateTag();
+            generateTag("Hot Tag Ckecked");
+            generateTag("TAG A");
+            generateTag("TAG B");
+            generateTag("TAG C");
+            updateCheckStatus(getChildAt(0), true);
             mInputView.setText("Input here...");
         }
     }
@@ -348,7 +357,60 @@ public class TagInputLayout extends ViewGroup implements TextWatcher, View.OnKey
     public void setDecorator(Decorator decorator) {
         if (decorator != null) {
             mDecorator = decorator;
-            initLayout();
+            try {
+                setInnerAttribute();
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new UnknownError(e.getMessage() + "\n unavailable to setDecorator");
+            }
+        }
+    }
+
+    /**
+     * Make sure the input EditView looks like TextView label
+     *
+     * @throws XmlPullParserException
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
+    private void setInnerAttribute() throws XmlPullParserException, IOException, ClassNotFoundException {
+        mInputView.setTextSize(mDecorator.getTextSize());
+        if (mDecorator.getMaxLength() != INVALID_VALUE) {
+            InputFilter maxLengthFilter = new InputFilter.LengthFilter(mDecorator.getMaxLength());
+            mInputView.setFilters(new InputFilter[]{maxLengthFilter});
+        }
+        if (mDecorator.getTextColor() != null && mDecorator.getTextColor().length > 1) {
+            mInputView.setTextColor(mDecorator.getTextColor()[0]);
+        }
+        if (mDecorator.getLayout() != INVALID_VALUE) {
+            XmlResourceParser parser = getResources().getLayout(mDecorator.getLayout());
+            final AttributeSet set = Xml.asAttributeSet(parser);
+            int type = 0;
+            while ((type = parser.next()) != XmlPullParser.START_TAG &&
+                    type != XmlPullParser.END_DOCUMENT) {
+                // Empty
+            }
+            if (type != XmlPullParser.START_TAG) {
+                throw new InflateException(parser.getPositionDescription()
+                        + ": No start tag found!");
+            }
+            final String name = parser.getName();
+            if ("TextView".equals(name) || Class.forName(name).isInstance(TextView.class)) {
+                int[] attr = new int[]{
+                        android.R.attr.layout_width,
+                        android.R.attr.layout_height,
+                };
+                TypedArray array = getContext().obtainStyledAttributes(set, attr);
+                final int height = array.getDimensionPixelSize(1, 0);
+                if (height != 0) {
+                    MarginLayoutParams layoutParams = (MarginLayoutParams) mInputView.getLayoutParams();
+                    layoutParams.height = height;
+                }
+                //TODO other useful attribute
+            } else {
+                throw new InflateException(parser.getPositionDescription()
+                        + ": Only TextView or subclass of TextView is supported!");
+            }
         }
     }
 
@@ -365,6 +427,12 @@ public class TagInputLayout extends ViewGroup implements TextWatcher, View.OnKey
             return tags;
         }
         return new CharSequence[]{};
+    }
+
+    public void setTagArray(CharSequence[] tags) {
+        for (CharSequence tag : tags) {
+            generateTag(tag);
+        }
     }
 
     /**
@@ -407,7 +475,7 @@ public class TagInputLayout extends ViewGroup implements TextWatcher, View.OnKey
         public Drawable[] getBackgroundDrawable();
 
         /**
-         * Size in unit of dip
+         * Size in unit of dip, if you provide custom layout by {@link #getLayout()}, it must have the same height value
          *
          * @return
          */
@@ -450,6 +518,7 @@ public class TagInputLayout extends ViewGroup implements TextWatcher, View.OnKey
                     newRoundRectShape(0xFF3f51b5, radius)
             };
             mTagHeight = getPixelSize(context, TypedValue.COMPLEX_UNIT_DIP, 30);
+            textColor = new int[]{0xFF000000, 0xFFFFFFFF};
         }
 
         private int getPixelSize(Context context, int unit, int size) {
