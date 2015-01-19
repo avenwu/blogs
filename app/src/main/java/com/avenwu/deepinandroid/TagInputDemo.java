@@ -1,5 +1,6 @@
 package com.avenwu.deepinandroid;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.TypedValue;
@@ -17,6 +18,17 @@ public class TagInputDemo extends ActionBarActivity {
         super.onCreate(savedInstanceState);
 //        setContentView(new TagInputLayout(this));
         setContentView(R.layout.test_tag_input_layout);
+//        ((TagInputLayout) findViewById(R.id.tags)).setDecorator(new TagInputLayout.SimpleDecorator(this) {
+//            Drawable[] mDrawable = new Drawable[]{
+//                    getResources().getDrawable(R.drawable.b1),
+//                    getResources().getDrawable(R.drawable.b2)
+//            };
+//
+//            @Override
+//            public Drawable[] getBackgroundDrawable() {
+//                return mDrawable;
+//            }
+//        });
     }
 
     public void onGetTags(View view) {

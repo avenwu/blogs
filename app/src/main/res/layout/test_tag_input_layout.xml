@@ -15,10 +15,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <com.avenwu.deepinandroid.widget.TagInputLayout
-        android:id="@+id/tags"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:padding="8dp" />
+    <!--<ScrollView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent">-->
 
+        <com.avenwu.deepinandroid.widget.TagInputLayout
+            android:id="@+id/tags"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="8dp" />
+    <!--</ScrollView>-->
 </LinearLayout>

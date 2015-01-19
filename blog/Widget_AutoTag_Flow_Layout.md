@@ -1,4 +1,5 @@
 #流式标签生成控件
+**同步发布于[avenwu.net](http://avenwu.net/2015/01/18/tag_layout/)**
 
 无图无真相  
 ![](http://7u2jir.com1.z0.glb.clouddn.com/tag_input_layout_demo.gif)

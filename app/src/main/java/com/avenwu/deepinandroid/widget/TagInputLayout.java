@@ -332,10 +332,12 @@ public class TagInputLayout extends ViewGroup implements TextWatcher, View.OnKey
 
     private void updateCheckStatus(View view, boolean checked) {
         if (view == null) return;
+        // don't reuse drawable for different tag label
+        Drawable[] drawables = mDecorator.getBackgroundDrawable();
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-            view.setBackgroundDrawable(mDecorator.getBackgroundDrawable()[checked ? 1 : 0]);
+            view.setBackgroundDrawable(drawables[drawables.length > 1 ? (checked ? 1 : 0) : 0]);
         } else {
-            view.setBackground(mDecorator.getBackgroundDrawable()[checked ? 1 : 0]);
+            view.setBackground(drawables[drawables.length > 1 ? (checked ? 1 : 0) : 0]);
         }
         final int[] color = mDecorator.getTextColor();
         if (color != null && color.length > 0) {
@@ -407,6 +409,7 @@ public class TagInputLayout extends ViewGroup implements TextWatcher, View.OnKey
                     layoutParams.height = height;
                 }
                 //TODO other useful attribute
+                array.recycle();
             } else {
                 throw new InflateException(parser.getPositionDescription()
                         + ": Only TextView or subclass of TextView is supported!");
@@ -503,8 +506,8 @@ public class TagInputLayout extends ViewGroup implements TextWatcher, View.OnKey
         protected int[] textColor;
         protected int[] padding;
         protected int[] margin;
-        protected Drawable[] background;
         protected int mTagHeight;
+        protected int mRadius;
 
         public SimpleDecorator(Context context) {
             textSize = 14;
@@ -512,11 +515,7 @@ public class TagInputLayout extends ViewGroup implements TextWatcher, View.OnKey
             padding = new int[]{p, p, p, p};
             final int m = getPixelSize(context, TypedValue.COMPLEX_UNIT_DIP, 2);
             margin = new int[]{m, m, m, m};
-            final int radius = getPixelSize(context, TypedValue.COMPLEX_UNIT_DIP, 5);
-            background = new Drawable[]{
-                    newRoundRectShape(0xFF4285f4, radius),
-                    newRoundRectShape(0xFF3f51b5, radius)
-            };
+            mRadius = getPixelSize(context, TypedValue.COMPLEX_UNIT_DIP, 5);
             mTagHeight = getPixelSize(context, TypedValue.COMPLEX_UNIT_DIP, 30);
             textColor = new int[]{0xFF000000, 0xFFFFFFFF};
         }
@@ -550,7 +549,10 @@ public class TagInputLayout extends ViewGroup implements TextWatcher, View.OnKey
         }
 
         public Drawable[] getBackgroundDrawable() {
-            return background;
+            return new Drawable[]{
+                    newRoundRectShape(0xFF4285f4, mRadius),
+                    newRoundRectShape(0xFF3f51b5, mRadius)
+            };
         }
 
         @Override
