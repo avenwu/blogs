@@ -34,15 +34,20 @@ import java.io.IOException;
 /**
  * Created by chaobin on 1/14/15.
  */
-public class TagInputLayout extends ViewGroup implements TextWatcher, View.OnKeyListener, View.OnClickListener {
+public class TagInputLayout extends ViewGroup
+        implements TextWatcher, View.OnKeyListener, View.OnClickListener {
 
     private static final int INVALID_VALUE = -1;
+
     private SparseIntArray mCachedPosition = new SparseIntArray();
+
     private EditText mInputView;
+
     /**
      * Comma in both English & Chinese
      */
     private char[] mKeyChar = new char[]{',', '，'};
+
     /**
      * Key event of enter, comma
      */
@@ -51,7 +56,9 @@ public class TagInputLayout extends ViewGroup implements TextWatcher, View.OnKey
             KeyEvent.KEYCODE_COMMA,
             KeyEvent.KEYCODE_NUMPAD_COMMA
     };
+
     private int mCheckIndex = INVALID_VALUE;
+
     private Decorator mDecorator;
 
     public TagInputLayout(Context context) {
@@ -81,12 +88,15 @@ public class TagInputLayout extends ViewGroup implements TextWatcher, View.OnKey
         int width = 0;
         int height = 0;
         mCachedPosition.clear();
-        final int widthSpace = MeasureSpec.getSize(widthMeasureSpec) - getPaddingLeft() - getPaddingRight();
+        final int widthSpace = MeasureSpec.getSize(widthMeasureSpec) - getPaddingLeft()
+                - getPaddingRight();
         final int count = getChildCount();
         int verticalCount = 0;
         for (int i = 0; i < count; ++i) {
             final View child = getChildAt(i);
-            if (nullChildView(child)) continue;
+            if (nullChildView(child)) {
+                continue;
+            }
             measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
             final MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
             int childWidthSpace = lp.leftMargin + child.getMeasuredWidth() + lp.rightMargin;
@@ -103,7 +113,8 @@ public class TagInputLayout extends ViewGroup implements TextWatcher, View.OnKey
             width = Math.max(width, maxWidth);
         }
         height += maxHeight + getPaddingTop() + getPaddingBottom();
-        setMeasuredDimension(getImprovedSize(widthMeasureSpec, width), getImprovedSize(heightMeasureSpec, height));
+        setMeasuredDimension(getImprovedSize(widthMeasureSpec, width),
+                getImprovedSize(heightMeasureSpec, height));
     }
 
     private boolean nullChildView(View child) {
@@ -130,7 +141,9 @@ public class TagInputLayout extends ViewGroup implements TextWatcher, View.OnKey
         final int count = getChildCount();
         for (int i = 0; i < count; i++) {
             View child = getChildAt(i);
-            if (nullChildView(child)) continue;
+            if (nullChildView(child)) {
+                continue;
+            }
             final int childWidth = child.getMeasuredWidth();
             final int childHeight = child.getMeasuredHeight();
             final MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
@@ -175,7 +188,8 @@ public class TagInputLayout extends ViewGroup implements TextWatcher, View.OnKey
         MarginLayoutParams params = new MarginLayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
                 mDecorator != null ? mDecorator.getHeight() : ViewGroup.LayoutParams.WRAP_CONTENT);
         if (mDecorator != null) {
-            params.setMargins(mDecorator.getMargin()[0], mDecorator.getMargin()[1], mDecorator.getMargin()[2], mDecorator.getMargin()[3]);
+            params.setMargins(mDecorator.getMargin()[0], mDecorator.getMargin()[1],
+                    mDecorator.getMargin()[2], mDecorator.getMargin()[3]);
         }
         return params;
     }
@@ -260,7 +274,8 @@ public class TagInputLayout extends ViewGroup implements TextWatcher, View.OnKey
     public void onClick(View v) {
         if (v instanceof TagInputLayout) {
             mInputView.requestFocus();
-            InputMethodManager m = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            InputMethodManager m = (InputMethodManager) getContext()
+                    .getSystemService(Context.INPUT_METHOD_SERVICE);
             m.showSoftInput(mInputView, InputMethodManager.SHOW_FORCED);
             // clear check status
             if (mCheckIndex != INVALID_VALUE) {
@@ -294,8 +309,6 @@ public class TagInputLayout extends ViewGroup implements TextWatcher, View.OnKey
 
     /**
      * can be null
-     *
-     * @param tag
      */
     private void generateTag(CharSequence tag) {
         CharSequence tagString = tag == null ? mInputView.getText().toString() : tag;
@@ -307,11 +320,13 @@ public class TagInputLayout extends ViewGroup implements TextWatcher, View.OnKey
             if (view instanceof TextView) {
                 tagLabel = (TextView) view;
             } else {
-                throw new IllegalArgumentException("The custom layout for tagLabel label must have TextView as root element");
+                throw new IllegalArgumentException(
+                        "The custom layout for tagLabel label must have TextView as root element");
             }
         } else {
             tagLabel = new TextView(getContext());
-            tagLabel.setPadding(mDecorator.getPadding()[0], mDecorator.getPadding()[1], mDecorator.getPadding()[2], mDecorator.getPadding()[3]);
+            tagLabel.setPadding(mDecorator.getPadding()[0], mDecorator.getPadding()[1],
+                    mDecorator.getPadding()[2], mDecorator.getPadding()[3]);
             tagLabel.setTextSize(mDecorator.getTextSize());
         }
         updateCheckStatus(tagLabel, false);
@@ -329,9 +344,10 @@ public class TagInputLayout extends ViewGroup implements TextWatcher, View.OnKey
         mInputView.requestFocus();
     }
 
-
     private void updateCheckStatus(View view, boolean checked) {
-        if (view == null) return;
+        if (view == null) {
+            return;
+        }
         // don't reuse drawable for different tag label
         Drawable[] drawables = mDecorator.getBackgroundDrawable();
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
@@ -370,12 +386,9 @@ public class TagInputLayout extends ViewGroup implements TextWatcher, View.OnKey
 
     /**
      * Make sure the input EditView looks like TextView label
-     *
-     * @throws XmlPullParserException
-     * @throws IOException
-     * @throws ClassNotFoundException
      */
-    private void setInnerAttribute() throws XmlPullParserException, IOException, ClassNotFoundException {
+    private void setInnerAttribute()
+            throws XmlPullParserException, IOException, ClassNotFoundException {
         mInputView.setTextSize(mDecorator.getTextSize());
         if (mDecorator.getMaxLength() != INVALID_VALUE) {
             InputFilter maxLengthFilter = new InputFilter.LengthFilter(mDecorator.getMaxLength());
@@ -405,7 +418,8 @@ public class TagInputLayout extends ViewGroup implements TextWatcher, View.OnKey
                 TypedArray array = getContext().obtainStyledAttributes(set, attr);
                 final int height = array.getDimensionPixelSize(1, 0);
                 if (height != 0) {
-                    MarginLayoutParams layoutParams = (MarginLayoutParams) mInputView.getLayoutParams();
+                    MarginLayoutParams layoutParams = (MarginLayoutParams) mInputView
+                            .getLayoutParams();
                     layoutParams.height = height;
                 }
                 //TODO other useful attribute
@@ -442,45 +456,35 @@ public class TagInputLayout extends ViewGroup implements TextWatcher, View.OnKey
      * Implements your own Decorator to custom the tag view
      */
     interface Decorator {
+
         /**
          * Size in unit of sp
-         *
-         * @return
          */
         public int getTextSize();
 
         /**
          * Padding on left, top, right, bottom in unit of dip
-         *
-         * @return
          */
         public int[] getPadding();
 
         /**
          * Margin on left, top, right, bottom in unit of dip
-         *
-         * @return
          */
         public int[] getMargin();
 
         /**
          * Color in format of AARRGGBB
-         *
-         * @return
          */
         public int[] getTextColor();
 
         /**
          * Tag view's background can be satisfied either by color or drawable resources,
-         *
-         * @return
          */
         public Drawable[] getBackgroundDrawable();
 
         /**
-         * Size in unit of dip, if you provide custom layout by {@link #getLayout()}, it must have the same height value
-         *
-         * @return
+         * Size in unit of dip, if you provide custom layout by {@link #getLayout()}, it must have
+         * the same height value
          */
         public int getHeight();
 
@@ -502,11 +506,17 @@ public class TagInputLayout extends ViewGroup implements TextWatcher, View.OnKey
      * Default decorator which will set on the TAG view
      */
     public static class SimpleDecorator implements Decorator {
+
         protected int textSize;
+
         protected int[] textColor;
+
         protected int[] padding;
+
         protected int[] margin;
+
         protected int mTagHeight;
+
         protected int mRadius;
 
         public SimpleDecorator(Context context) {
@@ -521,7 +531,8 @@ public class TagInputLayout extends ViewGroup implements TextWatcher, View.OnKey
         }
 
         private int getPixelSize(Context context, int unit, int size) {
-            return (int) TypedValue.applyDimension(unit, size, context.getResources().getDisplayMetrics());
+            return (int) TypedValue
+                    .applyDimension(unit, size, context.getResources().getDisplayMetrics());
         }
 
         @Override
